@@ -140,11 +140,12 @@ fetch(\`https://api.example.com/users/\${userId}\`, {
 
         {/* Endpoints Flow */}
         <div className="bg-gray-800 rounded-xl shadow-2xl p-4 md:p-8 mb-8 border border-gray-700">
-          <div className="grid grid-cols-1 md:flex md:items-center md:justify-between gap-6 md:gap-0 relative">
+          {/* Desktop View */}
+          <div className="hidden md:flex flex-row items-center justify-between gap-4">
             {endpoints.map((endpoint, index) => (
               <React.Fragment key={index}>
                 {/* Endpoint Node */}
-                <div 
+                <div
                   className={`flex flex-col items-center cursor-pointer transition-all
                     ${selectedEndpoint === index ? 'transform scale-110' : 'opacity-70'}
                   `}
@@ -162,20 +163,43 @@ fetch(\`https://api.example.com/users/\${userId}\`, {
                   </div>
                 </div>
 
-                {/* Connector - Hidden on mobile */}
+                {/* Connector */}
                 {index < endpoints.length - 1 && (
-                  <div className="hidden md:flex flex-1 items-center justify-center">
-                    <ArrowRight className={`w-6 h-6 text-gray-600 ${
-                      selectedEndpoint === index ? 'text-white animate-pulse' : ''
-                    }`} />
+                  <div className="flex items-center justify-center">
+                    <ArrowRight className={`w-6 h-6 text-gray-600 ${selectedEndpoint === index ? 'text-white animate-pulse' : ''
+                      }`} />
                   </div>
                 )}
               </React.Fragment>
             ))}
           </div>
 
+          {/* Mobile View - Grid 2x2 */}
+          <div className="md:hidden grid grid-cols-2 gap-4">
+            {endpoints.map((endpoint, index) => (
+              <div
+                key={index}
+                className={`flex flex-col items-center cursor-pointer transition-all
+                  ${selectedEndpoint === index ? 'transform scale-105' : 'opacity-70'}
+                `}
+                onClick={() => setSelectedEndpoint(index)}
+              >
+                <div className={`p-3 rounded-xl ${getMethodColor(endpoint.method)} 
+                  ${selectedEndpoint === index ? 'ring-4 ring-white ring-opacity-20' : ''}
+                  transition-all duration-300 hover:shadow-lg hover:transform hover:scale-105`}
+                >
+                  {getMethodIcon(endpoint.method)}
+                </div>
+                <div className="mt-2 text-center">
+                  <p className="font-mono text-xs text-white mb-1">{endpoint.method}</p>
+                  <p className="font-mono text-[10px] text-gray-400">{endpoint.path}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
           {/* Description Panel */}
-          <div className="mt-8 md:mt-12 p-4 md:p-6 bg-gray-900 rounded-xl border border-gray-700">
+          <div className="mt-8 p-6 bg-gray-900 rounded-xl border border-gray-700">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0">
               <div>
                 <h3 className="text-lg md:text-xl font-bold text-white mb-2">
@@ -196,31 +220,15 @@ fetch(\`https://api.example.com/users/\${userId}\`, {
 
             {/* Code Example with Prism.js Syntax Highlighting */}
             {showCode && (
-              <pre className="bg-gray-950 p-4 md:p-6 rounded-lg overflow-x-auto">
-                <code className="language-javascript">
-                  {endpoints[selectedEndpoint].code}
-                </code>
-              </pre>
+              <div className="max-w-full">
+                <pre className="bg-gray-950 p-6 rounded-lg overflow-x-auto">
+                  <code className="language-javascript text-sm md:text-base">
+                    {endpoints[selectedEndpoint].code}
+                  </code>
+                </pre>
+              </div>
             )}
           </div>
-        </div>
-
-        {/* Navigation */}
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={() => setSelectedEndpoint(prev => Math.max(0, prev - 1))}
-            disabled={selectedEndpoint === 0}
-            className="flex-1 md:flex-none px-4 md:px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Précédent
-          </button>
-          <button
-            onClick={() => setSelectedEndpoint(prev => Math.min(endpoints.length - 1, prev + 1))}
-            disabled={selectedEndpoint === endpoints.length - 1}
-            className="flex-1 md:flex-none px-4 md:px-6 py-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Suivant
-          </button>
         </div>
       </div>
     </div>
